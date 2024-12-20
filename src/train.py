@@ -1,3 +1,4 @@
+import numpy as np
 import keras
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -66,12 +67,7 @@ class VisualizePredictionsCallback(keras.callbacks.Callback):
 
     def on_epoch_begin(self, epoch, logs=None):
         if epoch < 10 or epoch % 5 == 0:
-            counter = 0
-            while True:
-                x, y = next(iter(self.val_ds))
+            for x, y in self.val_ds.take(self.num_samples):
                 pred = self.model.predict(x)
-                for i in range(len(x)):
-                    self.show_prediction(y[i], x[i], pred[i], figsize=(20, 20))
-                    counter += 1
-                    if counter == self.num_samples:
-                        return
+                i = np.random.randint(0, len(x), 1)[0]
+                self.show_prediction(y[i], x[i], pred[i], figsize=(20, 20))
