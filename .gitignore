@@ -2,3 +2,4 @@
 *.egg-info/
 data/*
 __pycache__/
+!data/download_data.py
