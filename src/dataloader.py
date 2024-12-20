@@ -1,4 +1,5 @@
 import tensorflow as tf
+from keras import layers
 import matplotlib.pyplot as plt
 
 
@@ -45,10 +46,26 @@ class Dataloader:
         normalization_layer = tf.keras.layers.Rescaling(1./255)
         train_ds = train_ds.map(lambda x: normalization_layer(x))
         val_ds = val_ds.map(lambda x: normalization_layer(x))
+
+        # spatial augmentations
+        spatial_augmentations = tf.keras.Sequential([
+            layers.RandomFlip("horizontal"),
+            layers.RandomTranslation(0.02, 0.02, fill_mode="reflect", interpolation="bilinear"),
+            layers.RandomRotation(0.03, fill_mode="reflect", interpolation="bilinear"),
+            layers.RandomZoom(-0.05, -0.05, fill_mode="reflect", interpolation="bilinear"),
+        ])
+        train_ds = train_ds.map(lambda x: spatial_augmentations(x, training=True))
+
+        # pixel augmentations
+        pixel_augmentations = tf.keras.Sequential([
+            layers.RandomBrightness(0.05, [0.0, 1.0]),
+            layers.RandomContrast(0.05),
+        ])
+        train_ds = train_ds.map(lambda x: pixel_augmentations(x, training=True))
         
         # create pairs of (input, target)
         train_ds = train_ds.map(lambda x: (x, x))
-        val_ds= val_ds.map(lambda x: (x, x))
+        val_ds = val_ds.map(lambda x: (x, x))
 
         # simulate old image grain by mixing Gaussian noise
         if noisy:
