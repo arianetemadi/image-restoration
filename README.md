@@ -68,3 +68,34 @@ And here are some samples of the photos I simulated using this technique:
 ![alt text](images/aged3.png)
 ![alt text](images/aged4.png)
 ![alt text](images/aged5.png)
+
+### 3. Model selection
+Our goal is to restore old photos that have been damaged and worn out over time.
+I did a lot of reseach and finally landed on UNets as the model.
+UNets are a great choice for all tasks where the output is another image, e.g. image segmentation.
+Furthermore, UNets have proven themselves in image reconstruction, super resolution, and colorization tasks.
+
+For implementation, check out `src/model.py`.
+
+I used Keras to implement the main pipelines.
+
+### 5. Instructions
+Either run the files in the scripts folder, or follow along with the jupyter notebooks.
+Both perform the exact same code.
+Though, of course, the notebooks are preferred for conducting experiments as they are interactive.
+
+First, the data has to be downloaded from Google Drive and extracted to the `data` folder.
+
+Then, the training script can be executed.
+
+### 6. Results
+Using the early stopping technique, the model stopped training after 20 epochs.
+Here are some results:
+![alt text](images/result1.png)
+![alt text](images/result2.png)
+![alt text](images/result3.png)
+![alt text](images/result4.png)
+![alt text](images/result5.png)
+
+We can see that the model can take care of local noise, however, it struggles with completing large patches (scratches) that are wiped out.
+The model works well as a denoiser, however, it struggles with image in-painting.
