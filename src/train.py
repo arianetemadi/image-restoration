@@ -5,18 +5,19 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.callbacks import EarlyStopping, LearningRateScheduler
 
 
-class Trainer():
+class Trainer:
     """
     Class handling the training of our UNet.
     """
+
     def __init__(
-            self,
-            model,
-            train_ds,
-            val_ds,
-            epochs=10,
-            learning_rate=1e-3,
-            patience=20,
+        self,
+        model,
+        train_ds,
+        val_ds,
+        epochs=10,
+        learning_rate=1e-3,
+        patience=20,
     ):
         """
         Prepares the trainer and compiles the model.
@@ -28,18 +29,19 @@ class Trainer():
         self.learning_rate = learning_rate
 
         self.early_stopping = EarlyStopping(
-            monitor='val_loss',
+            monitor="val_loss",
             min_delta=0.001,
             patience=patience,
             verbose=1,
-            mode='min'
+            mode="min",
         )
 
-        self.lr_schedule = LearningRateScheduler(lambda epoch: learning_rate * (0.95 ** epoch))
+        self.lr_schedule = LearningRateScheduler(
+            lambda epoch: learning_rate * (0.95**epoch)
+        )
 
         self.model.compile(
-            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
-            loss='mse'
+            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss="mse"
         )
 
     def train(self, show_samples=5):
@@ -47,7 +49,10 @@ class Trainer():
             self.train_ds,
             epochs=self.epochs,
             validation_data=self.val_ds,
-            callbacks=[self.lr_schedule, VisualizePredictionsCallback(self.val_ds, show_samples)],
+            callbacks=[
+                self.lr_schedule,
+                VisualizePredictionsCallback(self.val_ds, show_samples),
+            ],
             verbose=1,
         )
 
@@ -56,6 +61,7 @@ class VisualizePredictionsCallback(keras.callbacks.Callback):
     """
     Custom callback for plotting validation results during training.
     """
+
     def __init__(self, val_ds, num_samples):
         super().__init__()
         self.val_ds = val_ds
@@ -67,14 +73,14 @@ class VisualizePredictionsCallback(keras.callbacks.Callback):
         and the restored image for comparison.
         """
         f, ax = plt.subplots(1, 3, figsize=figsize)
-        ax[0].imshow(original, cmap='gray')
+        ax[0].imshow(original, cmap="gray")
         ax[0].set_title("Original")
-        ax[1].imshow(aged, cmap='gray')
+        ax[1].imshow(aged, cmap="gray")
         ax[1].set_title("Aged")
-        ax[2].imshow(restored, cmap='gray')
+        ax[2].imshow(restored, cmap="gray")
         ax[2].set_title("Restored")
         for j in range(3):
-            ax[j].axis('off')
+            ax[j].axis("off")
         plt.tight_layout()
         plt.show()
 

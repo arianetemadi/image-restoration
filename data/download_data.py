@@ -6,7 +6,7 @@ import shutil
 def load_data_google_drive(url, target_name):
     """
     Utility function for downloading zipped data from Google Drive.
-    
+
     Args:
         url (str): url to the zipped file on Google Drive.
         target_name (str): name of the folder for the downloaded and extracted data.

@@ -7,6 +7,7 @@ class UNet(tf.keras.Model):
     Implementation of the UNet model in keras, as introduced in:
     https://arxiv.org/abs/1505.04597
     """
+
     def __init__(self):
         """
         Initializes building blocks of the model.
@@ -14,51 +15,77 @@ class UNet(tf.keras.Model):
         super(UNet, self).__init__()
 
         # Encoder Blocks
-        self.enc1 = models.Sequential([
-            layers.Conv2D(16, (3, 3), padding='same', activation='relu', input_shape=(None, None, 1)),
-            layers.Conv2D(16, (3, 3), padding='same', activation='relu')
-        ])
+        self.enc1 = models.Sequential(
+            [
+                layers.Conv2D(
+                    16,
+                    (3, 3),
+                    padding="same",
+                    activation="relu",
+                    input_shape=(None, None, 1),
+                ),
+                layers.Conv2D(16, (3, 3), padding="same", activation="relu"),
+            ]
+        )
         self.pool1 = layers.MaxPooling2D((2, 2))
 
-        self.enc2 = models.Sequential([
-            layers.Conv2D(32, (3, 3), padding='same', activation='relu'),
-            layers.Conv2D(32, (3, 3), padding='same', activation='relu')
-        ])
+        self.enc2 = models.Sequential(
+            [
+                layers.Conv2D(32, (3, 3), padding="same", activation="relu"),
+                layers.Conv2D(32, (3, 3), padding="same", activation="relu"),
+            ]
+        )
         self.pool2 = layers.MaxPooling2D((2, 2))
 
-        self.enc3 = models.Sequential([
-            layers.Conv2D(64, (3, 3), padding='same', activation='relu'),
-            layers.Conv2D(64, (3, 3), padding='same', activation='relu')
-        ])
+        self.enc3 = models.Sequential(
+            [
+                layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+                layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+            ]
+        )
         self.pool3 = layers.MaxPooling2D((2, 2))
 
         # Bottleneck
-        self.bottleneck = models.Sequential([
-            layers.Conv2D(128, (3, 3), padding='same', activation='relu'),
-            layers.Conv2D(128, (3, 3), padding='same', activation='relu')
-        ])
+        self.bottleneck = models.Sequential(
+            [
+                layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
+                layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
+            ]
+        )
 
         # Decoder Blocks
-        self.upconv3 = layers.Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same')
-        self.dec3 = models.Sequential([
-            layers.Conv2D(64, (3, 3), padding='same', activation='relu'),
-            layers.Conv2D(64, (3, 3), padding='same', activation='relu')
-        ])
+        self.upconv3 = layers.Conv2DTranspose(
+            64, (2, 2), strides=(2, 2), padding="same"
+        )
+        self.dec3 = models.Sequential(
+            [
+                layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+                layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+            ]
+        )
 
-        self.upconv2 = layers.Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')
-        self.dec2 = models.Sequential([
-            layers.Conv2D(32, (3, 3), padding='same', activation='relu'),
-            layers.Conv2D(32, (3, 3), padding='same', activation='relu')
-        ])
+        self.upconv2 = layers.Conv2DTranspose(
+            32, (2, 2), strides=(2, 2), padding="same"
+        )
+        self.dec2 = models.Sequential(
+            [
+                layers.Conv2D(32, (3, 3), padding="same", activation="relu"),
+                layers.Conv2D(32, (3, 3), padding="same", activation="relu"),
+            ]
+        )
 
-        self.upconv1 = layers.Conv2DTranspose(16, (2, 2), strides=(2, 2), padding='same')
-        self.dec1 = models.Sequential([
-            layers.Conv2D(16, (3, 3), padding='same', activation='relu'),
-            layers.Conv2D(16, (3, 3), padding='same', activation='relu')
-        ])
+        self.upconv1 = layers.Conv2DTranspose(
+            16, (2, 2), strides=(2, 2), padding="same"
+        )
+        self.dec1 = models.Sequential(
+            [
+                layers.Conv2D(16, (3, 3), padding="same", activation="relu"),
+                layers.Conv2D(16, (3, 3), padding="same", activation="relu"),
+            ]
+        )
 
         # Output Layer
-        self.final = layers.Conv2D(1, (1, 1), activation='sigmoid')
+        self.final = layers.Conv2D(1, (1, 1), activation="sigmoid")
 
     def call(self, inputs):
         """
