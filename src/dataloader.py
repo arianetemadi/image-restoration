@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 
 
 class Dataloader:
+    """
+    Class for loading the tensorflow datasets for training and validation.
+    Overlays noise and dirt texture on images.
+    Performs image augmentation.
+    """
     def __init__(
             self,
             image_dir,
@@ -27,6 +32,18 @@ class Dataloader:
             texture_alpha=0.3,
             shuffle=False,
     ):
+        """
+        Main function of the class.
+        It loads, normalizes, augments, adds noise, and overlays dirt texture on top of images.
+
+        Args:
+            noisy (boolean): Whether to add noise to the image, to simulate an aged look.
+            textured (boolean): Whether to overlay dirt textures on top of images, to simulate an aged look.
+            texture_alpha (float): Determines the transparency of texture overlay.
+            shuffle (boolean): Whether to shuffle datasets.
+        Returns:
+            Pair of training dataset and validation dataset.
+        """
         
         # load grayscale images
         train_ds, val_ds = tf.keras.utils.image_dataset_from_directory(
@@ -92,8 +109,6 @@ class Dataloader:
             clip_layer = tf.keras.layers.ReLU(max_value=1)
             train_ds = train_ds.map(lambda x, y: (clip_layer(x + next(iter(texture_ds))) * texture_alpha, y))
             val_ds = val_ds.map(lambda x, y: (clip_layer(x + next(iter(texture_ds))) * texture_alpha, y))
-            # bug: if next(iter()) gives a batch that does not necessarily match the dim of x
-        # where else do I need to clip? at the end of model? no probably? Before plotting images anywhere, to make sure matplotlib is not interfering?
         
         self.train_ds = train_ds
         self.val_ds = val_ds
@@ -101,6 +116,15 @@ class Dataloader:
         return self.train_ds, self.val_ds
     
     def show_samples(self, num_samples, fig_size=(7, 7)):
+        """
+        Function for visualizing a few samples of the loaded dataset.
+
+        Args:
+            num_samples (int): number of samples to show.
+
+        Returns:
+            None
+        """
         counter = 0        
         while True:
             x, y = next(iter(self.train_ds))
@@ -111,11 +135,22 @@ class Dataloader:
                     return
 
     def show_sample(self, original, aged, figsize):
+        """
+        Function that visualizes one sample in one row.
+        Original (raw) image is on the left, aged (processed) image is on the right.
+
+        Args:
+            original: the raw version of the image.
+            aged: the processed version of the image.
+
+        Returns:
+            None
+        """
         f, ax = plt.subplots(1, 2, figsize=figsize)
         ax[0].imshow(original, cmap='gray')
-        ax[0].set_title("Original")
+        ax[0].set_title("Original (raw)")
         ax[1].imshow(aged, cmap='gray')
-        ax[1].set_title("Aged")
+        ax[1].set_title("Aged (processed)")
         for j in range(2):
             ax[j].axis('off')
         plt.tight_layout()

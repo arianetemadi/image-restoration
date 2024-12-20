@@ -3,7 +3,14 @@ from tensorflow.keras import layers, models
 
 
 class UNet(tf.keras.Model):
+    """
+    Implementation of the UNet model in keras, as introduced in:
+    https://arxiv.org/abs/1505.04597
+    """
     def __init__(self):
+        """
+        Initializes building blocks of the model.
+        """
         super(UNet, self).__init__()
 
         # Encoder Blocks
@@ -54,6 +61,9 @@ class UNet(tf.keras.Model):
         self.final = layers.Conv2D(1, (1, 1), activation='sigmoid')
 
     def call(self, inputs):
+        """
+        Forwards the inputs through the pipeline.
+        """
         # Encoder Path
         x1 = self.enc1(inputs)
         p1 = self.pool1(x1)

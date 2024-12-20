@@ -6,6 +6,9 @@ from tensorflow.keras.callbacks import EarlyStopping, LearningRateScheduler
 
 
 class Trainer():
+    """
+    Class handling the training of our UNet.
+    """
     def __init__(
             self,
             model,
@@ -15,6 +18,9 @@ class Trainer():
             learning_rate=1e-3,
             patience=20,
     ):
+        """
+        Prepares the trainer and compiles the model.
+        """
         self.model = model
         self.train_ds = train_ds
         self.val_ds = val_ds
@@ -47,12 +53,19 @@ class Trainer():
 
 
 class VisualizePredictionsCallback(keras.callbacks.Callback):
+    """
+    Custom callback for plotting validation results during training.
+    """
     def __init__(self, val_ds, num_samples):
         super().__init__()
         self.val_ds = val_ds
         self.num_samples = num_samples
 
     def show_prediction(self, original, aged, restored, figsize=(7, 7)):
+        """
+        Plot one row, one triplet, containing the original image, the aged image,
+        and the restored image for comparison.
+        """
         f, ax = plt.subplots(1, 3, figsize=figsize)
         ax[0].imshow(original, cmap='gray')
         ax[0].set_title("Original")
@@ -66,6 +79,9 @@ class VisualizePredictionsCallback(keras.callbacks.Callback):
         plt.show()
 
     def on_epoch_begin(self, epoch, logs=None):
+        """
+        Plot validation results at the beginning of every few epochs.
+        """
         if epoch < 10 or epoch % 5 == 0:
             for x, y in self.val_ds.take(self.num_samples):
                 pred = self.model.predict(x)
