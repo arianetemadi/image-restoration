@@ -4,6 +4,7 @@ setup(
     name="image-restoration",
     version="0.0.1",
     description="Project for Applied Deep Learning course, 2024WS",
+    author="Arian Etemadi",
     license="MIT",
     install_requires=[
         "ipykernel==6.29.5",
