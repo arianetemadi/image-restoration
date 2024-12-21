@@ -22,7 +22,7 @@ class UNet(tf.keras.Model):
 
         self.color_mode = color_mode
 
-        # Encoder Blocks
+        # encoder
         self.enc1 = models.Sequential(
             [
                 layers.Conv2D(
@@ -53,7 +53,7 @@ class UNet(tf.keras.Model):
         )
         self.pool3 = layers.MaxPooling2D((2, 2))
 
-        # Bottleneck
+        # bottleneck
         self.bottleneck = models.Sequential(
             [
                 layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
@@ -62,7 +62,7 @@ class UNet(tf.keras.Model):
             ]
         )
 
-        # Decoder Blocks
+        # decoder
         self.upconv3 = layers.Conv2DTranspose(
             64, (2, 2), strides=(2, 2), padding="same"
         )
@@ -93,7 +93,7 @@ class UNet(tf.keras.Model):
             ]
         )
 
-        # Output Layer
+        # output
         num_output_channels = 1 if self.color_mode == "grayscale" else 3
         self.final = layers.Conv2D(num_output_channels, (1, 1), activation="sigmoid")
 
@@ -101,7 +101,7 @@ class UNet(tf.keras.Model):
         """
         Forwards the inputs through the pipeline.
         """
-        # Encoder Path
+        # encoder
         x1 = self.enc1(inputs)
         p1 = self.pool1(x1)
 
@@ -111,10 +111,10 @@ class UNet(tf.keras.Model):
         x3 = self.enc3(p2)
         p3 = self.pool3(x3)
 
-        # Bottleneck
+        # bottleneck
         x4 = self.bottleneck(p3)
 
-        # Decoder Path
+        # decoder
         up3 = self.upconv3(x4)
         cat3 = layers.concatenate([up3, x3], axis=-1)
         x5 = self.dec3(cat3)
@@ -127,7 +127,6 @@ class UNet(tf.keras.Model):
         cat1 = layers.concatenate([up1, x1], axis=-1)
         x7 = self.dec1(cat1)
 
-        # Final Output
         output = self.final(x7)
 
         return output
