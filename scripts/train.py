@@ -11,12 +11,14 @@ if __name__ == "__main__":
 
     image_dir = "../data/div2k-hr-train/"
     texture_dir = "../data/textures/"
+    color_mode = "grayscale"
 
     dataloader = Dataloader(
         image_dir,
         texture_dir,
         image_size=(32 * 21, 32 * 32),  # = (672, 1024)
         batch_size=8,
+        color_mode=color_mode,
         validation_split=0.2,
     )
 
@@ -29,7 +31,7 @@ if __name__ == "__main__":
     )
 
     # instantiate the model
-    model = UNet()
+    model = UNet(color_mode=color_mode)
 
     # instantiate the trainer
     trainer = Trainer(
