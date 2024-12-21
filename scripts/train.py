@@ -9,7 +9,7 @@ if __name__ == "__main__":
     For experimenting, refer to the training notebook instead.
     """
 
-    image_dir = "../data/div2k-hr/"
+    image_dir = "../data/div2k-hr-train/"
     texture_dir = "../data/textures/"
 
     dataloader = Dataloader(
@@ -36,9 +36,10 @@ if __name__ == "__main__":
         model=model,
         train_ds=train_ds,
         val_ds=val_ds,
+        checkpoint_filepath="../checkpoints/checkpoint.weights.h5",
         epochs=10,
         learning_rate=1e-3,
     )
 
     # run the training loop
-    trainer.train(show_samples=4)
+    trainer.train(num_samples_shown=4)

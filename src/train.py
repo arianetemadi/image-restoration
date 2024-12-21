@@ -2,7 +2,11 @@ import numpy as np
 import keras
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from tensorflow.keras.callbacks import EarlyStopping, LearningRateScheduler
+from tensorflow.keras.callbacks import (
+    EarlyStopping,
+    LearningRateScheduler,
+    ModelCheckpoint,
+)
 
 
 class Trainer:
@@ -15,6 +19,7 @@ class Trainer:
         model,
         train_ds,
         val_ds,
+        checkpoint_filepath,
         epochs=10,
         learning_rate=1e-3,
         patience=20,
@@ -27,32 +32,55 @@ class Trainer:
         self.val_ds = val_ds
         self.epochs = epochs
         self.learning_rate = learning_rate
+        self.callbacks = []
 
-        self.early_stopping = EarlyStopping(
-            monitor="val_loss",
-            min_delta=0.001,
-            patience=patience,
-            verbose=1,
-            mode="min",
+        # learning rate scheduler callback
+        self.callbacks.append(
+            LearningRateScheduler(lambda epoch: learning_rate * (0.95**epoch))
         )
 
-        self.lr_schedule = LearningRateScheduler(
-            lambda epoch: learning_rate * (0.95**epoch)
+        # early stopping callback
+        self.callbacks.append(
+            EarlyStopping(
+                monitor="val_loss",
+                min_delta=0.001,
+                patience=patience,
+                verbose=1,
+                mode="min",
+            )
+        )
+
+        # model checkpoint saver callback
+        self.callbacks.append(
+            ModelCheckpoint(
+                filepath=checkpoint_filepath,
+                save_weights_only=True,
+                monitor="val_accuracy",
+                mode="max",
+                save_best_only=True,
+            )
         )
 
         self.model.compile(
             optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss="mse"
         )
 
-    def train(self, show_samples=5):
+    def train(self, num_samples_shown=5):
+        """
+        Runs the training loop.
+        Args:
+            show_samples (int): number of training results to be shown
+                for the first 10 epochs and every 5 epochs afterwards
+        """
+        self.callbacks.append(
+            VisualizePredictionsCallback(self.val_ds, num_samples_shown)
+        )
+
         self.model.fit(
             self.train_ds,
             epochs=self.epochs,
             validation_data=self.val_ds,
-            callbacks=[
-                self.lr_schedule,
-                VisualizePredictionsCallback(self.val_ds, show_samples),
-            ],
+            callbacks=self.callbacks,
             verbose=1,
         )
 
