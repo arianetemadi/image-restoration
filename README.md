@@ -32,7 +32,7 @@ source venv/bin/activate
 
 Then, since all dependencies are listed in `setup.py`, the project can simply be installed by running
 ```bash
-pip install .
+pip install -e .
 ```
 at the root of the cloned repository.
 
