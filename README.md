@@ -106,3 +106,9 @@ After training the `grayscale` model for 36 epochs, here are a few test results 
 
 It can be seen that the model is great at taking care of noise and small scratches.
 On the other hand, the model struggles with larger wear and tear that require image in-painting for restoration, which is of course more difficult as the model needs to gain a much deeper, more global, more contextual understanding of the dataset.
+
+As for the colorization, the `rgb` version of the pipeline does not work at all and fails to understand colors (after 20 epochs):
+
+![alt text](images/rgb1.png)
+![alt text](images/rgb2.png)
+![alt text](images/rgb3.png)
