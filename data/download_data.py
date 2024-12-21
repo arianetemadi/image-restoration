@@ -29,7 +29,7 @@ def download_and_unzip_from_drive(url, target_name):
     return dir
 
 
-def download_checkpoint_from_drive(url):
+def download_checkpoint_from_drive(url, target_name):
     """
     Utility function for downloading pretrained model weights from Google Drive.
 
@@ -42,7 +42,7 @@ def download_checkpoint_from_drive(url):
     root = "../checkpoints/"
 
     # download from Google Drive
-    path = root + "pretrained.weights.h5"
+    path = root + target_name + ".weights.h5"
     if not os.path.isfile(path):
         gdown.download(url=url, output=path, fuzzy=True)
 

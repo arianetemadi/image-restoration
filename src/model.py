@@ -57,6 +57,7 @@ class UNet(tf.keras.Model):
         self.bottleneck = models.Sequential(
             [
                 layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
+                layers.Conv2D(256, (3, 3), padding="same", activation="relu"),
                 layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
             ]
         )
