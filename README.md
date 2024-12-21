@@ -118,6 +118,11 @@ As for the colorization, the `rgb` version of the pipeline does not work at all 
 ![alt text](images/rgb2.png)
 ![alt text](images/rgb3.png)
 
+I also tried converting images to the LAB space, and using a model to predict only the A and B channels.
+The L channel is only the brightness.
+Therefore, assuming the noise and wear and tear are restored, we can directly put the input image into channel L, and only predict A and B to colorize the photo. This should make it easier for our model to predict, as it would only have to get 2 channels right, as opposed to 3 channels in rgb.
+However, I did not see any qualitative improvement in results.
+
 #### 3.5 Time breakdown
 1. Dataset synthesis and augmentation: 5 hrs, which was much faster than I expected since the idea of overlaying dirt textures worked out pretty well. The simulated photos look realistic.
 2. Models took most of the time by far: about 40 hrs, which was more than I expected. Choosing a suitable approach to implementation and establishing a working pipeline took longer than I expected. Development was also made more difficult because of the difficulties with development in Colab. Initially, I was developing completely in Colab before committing to any approach.
