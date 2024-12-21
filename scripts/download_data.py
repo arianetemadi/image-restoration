@@ -22,6 +22,8 @@ if __name__ == "__main__":
     url = "https://drive.google.com/file/d/1-35t5gG8JXVJ9n0S_nyvBEWheh2s5Bax/view?usp=sharing"
     download_and_unzip_from_drive(url, "textures")
 
-    ### Load pretrained model
+    ### Load pretrained models
     url = "https://drive.google.com/file/d/15R_p0fHxM8qwHBQtnE7pWeXbqsmdrheP/view?usp=sharing"
     download_checkpoint_from_drive(url, "pretrained-grayscale")
+    url = "https://drive.google.com/file/d/15RcEP-rc1fvKla4AHgGfh5MIRqMqnmvH/view?usp=sharing"
+    download_checkpoint_from_drive(url, "pretrained-rgb")

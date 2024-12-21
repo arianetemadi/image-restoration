@@ -21,81 +21,88 @@ Project of the course *Applied Deep Learning*
 5. final report and presentation: 10 hrs
 
 
-## Assignment 2
+## Assignment 2 - Hacking
 
 ### 1. Installation
-Clone the repository.
-Then, create a virtual env:
-
+After cloning the repository, create a virtual environment by running
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-All dependencies are listed in `setup.py`.
-Therefore, simply install the project by only running:
+Then, since all dependencies are listed in `setup.py`, the project can simply be installed by running
 ```bash
 pip install .
 ```
-in the root of the repository.
+at the root of the cloned repository.
 
-### 2. Dataset collection and preprocessing
-The main dataset for this project is DIV2K.
-It contains 1000 high resolution images, mainly designed for tasks regarding super resolution and reconstruction.
+### 2. Report
 
-Furthermore, since there are no datasets available for old images, we have to simulate our own.
-For this, I perform three operations in our dataest:
-1. Make images black and white
-2. Add Gaussian noise to simulate the grain in old photos
-3. Last but certainly not least, overlay textures of dirt to simulate the wear and tear of old photos
+#### 2.1. Dataset
+The [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) dataset is used as the source for our unprocessed photos.
+It contains 1000 high-resolution photos divided into: 800 photos for training, 100 photos for validation, and 100 photos for testing.
 
-Here are a few of the textures that were overlayed:
+First, we have to simulate the appearance of old grainy photos with visible wear and tear.
+To this end, I perform three operations in this order:
+1. Transform the photo to grayscale
+2. Add Gaussian noise to simulate the grain
+3. Most importantly, overlay specific textures to simulate the desired wear and tear.
 
-<img src="images/texture1.jpg" alt="drawing" width="400"/>
+I gathered textures that look like this (64 in total):
 
-<img src="images/texture2.jpg" alt="drawing" width="400"/>
+<img src="images/texture1.jpg" alt="drawing" width="300"/>
+<img src="images/texture2.jpg" alt="drawing" width="300"/>
+<img src="images/texture3.jpg" alt="drawing" width="300"/>
+<img src="images/texture4.jpg" alt="drawing" width="300"/>
 
-<img src="images/texture3.jpg" alt="drawing" width="400"/>
-
-<img src="images/texture4.jpg" alt="drawing" width="400"/>
-
-<img src="images/texture5.jpg" alt="drawing" width="400"/>
-
-And here are some samples of the photos I simulated using this technique:
-
+Here are some of the results of the simulated "aged" photos using this technique:
 ![alt text](images/aged1.png)
 ![alt text](images/aged2.png)
 ![alt text](images/aged3.png)
 ![alt text](images/aged4.png)
 ![alt text](images/aged5.png)
+![alt text](images/aged6.png)
 
-### 3. Model selection
-Our goal is to restore old photos that have been damaged and worn out over time.
-I did a lot of reseach and finally landed on UNets as the model.
-UNets are a great choice for all tasks where the output is another image, e.g. image segmentation.
-Furthermore, UNets have proven themselves in image reconstruction, super resolution, and colorization tasks.
+All of these transformations are implemented like an image augmentation.
+Therefore, nothing is saved explicitly.
+Transformations are applied randomly on the fly.
 
-For implementation, check out `src/model.py`.
+#### 2.2. Model
+After a lot of research, I landed on UNets as the model for this task.
+UNets have proven themselves in tasks regarding image reconstruction.
+This is how the architecture looks in general:
+<img src="images/unet.png" alt="drawing" width="500"/>
 
-I used Keras to implement the main pipelines.
+After trial and error, I ended up using a smaller version.
+For details, please check out `src/model.py`.
 
-### 5. Instructions
-Either run the files in the scripts folder, or follow along with the jupyter notebooks.
-Both perform the exact same code.
-Though, of course, the notebooks are preferred for conducting experiments as they are interactive.
+#### 2.3. Instructions for execution
+First, the data has to be downloaded from Google Drive and extracted to the `data` folder, by running `notebooks/download_data.ipynb` or `scripts/download_data.ipynb`.
 
-First, the data has to be downloaded from Google Drive and extracted to the `data` folder.
+Then, the model can be trained via `notebooks/train.ipynb` or `scripts/train.py`.
 
-Then, the training script can be executed.
+Finally, the model can be tested via `notebooks/predict.ipynb`.
+Pretrained weights are also available (in `checkpoints`).
 
-### 6. Results
-Using the early stopping technique, the model stopped training after 20 epochs.
-Here are some results:
+### 2.4. Implementation details
+Some techniques I used:
+- Early stopping
+- Learning rate scheduling
+- Spatial and pixel-wise image augmentations
+
+The pipeline can work in two color modes: `rgb` and `grayscale`.
+The difference is that in `rgb` the task is harder: we also need to colorize the image.
+
+The loss function is the Mean Squared Error (MSE).
+
+### 2.5. Results
+After training the `grayscale` model for 36 epochs, here are a few test results of the epoch with the lowest validation loss.
 ![alt text](images/result1.png)
 ![alt text](images/result2.png)
 ![alt text](images/result3.png)
 ![alt text](images/result4.png)
 ![alt text](images/result5.png)
+![alt text](images/result6.png)
 
-We can see that the model can take care of local noise, however, it struggles with completing large patches (scratches) that are wiped out.
-The model works well as a denoiser, however, it struggles with image in-painting.
+It can be seen that the model is great at taking care of noise and small scratches.
+On the other hand, the model struggles with larger wear and tear that require image in-painting for restoration, which is of course more difficult as the model needs to gain a much deeper, more global, more contextual understanding of the dataset.

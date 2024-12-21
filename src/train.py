@@ -36,7 +36,7 @@ class Trainer:
 
         # learning rate scheduler callback
         self.callbacks.append(
-            LearningRateScheduler(lambda epoch: learning_rate * (0.95**epoch))
+            LearningRateScheduler(lambda epoch: learning_rate * (0.95 ** epoch))
         )
 
         # early stopping callback
