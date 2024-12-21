@@ -8,11 +8,19 @@ class UNet(tf.keras.Model):
     https://arxiv.org/abs/1505.04597
     """
 
-    def __init__(self):
+    def __init__(self, color_mode="grayscale"):
         """
         Initializes building blocks of the model.
+
+        Args:
+            color_mode (str): either "grayscale" or "rgb".
+
+        Returns:
+            UNet: Instance of the created model.
         """
         super(UNet, self).__init__()
+
+        self.color_mode = color_mode
 
         # Encoder Blocks
         self.enc1 = models.Sequential(
@@ -85,7 +93,8 @@ class UNet(tf.keras.Model):
         )
 
         # Output Layer
-        self.final = layers.Conv2D(1, (1, 1), activation="sigmoid")
+        num_output_channels = 1 if self.color_mode == "grayscale" else 3
+        self.final = layers.Conv2D(num_output_channels, (1, 1), activation="sigmoid")
 
     def call(self, inputs):
         """

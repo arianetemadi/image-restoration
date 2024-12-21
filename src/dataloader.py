@@ -16,6 +16,7 @@ class Dataloader:
         texture_dir,
         image_size,
         batch_size,
+        color_mode="grayscale",
         validation_split=0.2,
         seed=123,
     ):
@@ -23,6 +24,7 @@ class Dataloader:
         self.texture_dir = texture_dir
         self.image_size = image_size
         self.batch_size = batch_size
+        self.color_mode = color_mode
         self.validation_split = validation_split
         self.seed = seed
 
@@ -53,7 +55,7 @@ class Dataloader:
             validation_split=self.validation_split,
             subset="both",
             seed=self.seed,
-            color_mode="grayscale",
+            color_mode=self.color_mode,
             image_size=self.image_size,
             interpolation="bilinear",
             crop_to_aspect_ratio=True,
@@ -95,6 +97,11 @@ class Dataloader:
         # create pairs of (input, target)
         train_ds = train_ds.map(lambda x: (x, x))
         val_ds = val_ds.map(lambda x: (x, x))
+
+        # make x grayscale
+        if self.color_mode == "rgb":
+            train_ds = train_ds.map(lambda x, y: (tf.image.rgb_to_grayscale(x), y))
+            val_ds = val_ds.map(lambda x, y: (tf.image.rgb_to_grayscale(x), y))
 
         # simulate old image grain by mixing Gaussian noise
         if noisy:
