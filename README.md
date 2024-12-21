@@ -36,9 +36,17 @@ pip install .
 ```
 at the root of the cloned repository.
 
-### 2. Report
+### 2. Instructions for execution
+First, the data has to be downloaded from Google Drive and extracted to the `data` folder, by running `notebooks/download_data.ipynb` or `scripts/download_data.ipynb`.
 
-#### 2.1. Dataset
+Then, the model can be trained via `notebooks/train.ipynb` or `scripts/train.py`.
+
+Finally, the model can be tested via `notebooks/predict.ipynb`.
+Pretrained weights are also available (in `checkpoints`).
+
+### 3. Report
+
+#### 3.1. Dataset
 The [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) dataset is used as the source for our unprocessed photos.
 It contains 1000 high-resolution photos divided into: 800 photos for training, 100 photos for validation, and 100 photos for testing.
 
@@ -67,7 +75,7 @@ All of these transformations are implemented like an image augmentation.
 Therefore, nothing is saved explicitly.
 Transformations are applied randomly on the fly.
 
-#### 2.2. Model
+#### 3.2. Model
 After a lot of research, I landed on UNets as the model for this task.
 UNets have proven themselves in tasks regarding image reconstruction.
 This is how the architecture looks in general:
@@ -76,15 +84,7 @@ This is how the architecture looks in general:
 After trial and error, I ended up using a smaller version.
 For details, please check out `src/model.py`.
 
-#### 2.3. Instructions for execution
-First, the data has to be downloaded from Google Drive and extracted to the `data` folder, by running `notebooks/download_data.ipynb` or `scripts/download_data.ipynb`.
-
-Then, the model can be trained via `notebooks/train.ipynb` or `scripts/train.py`.
-
-Finally, the model can be tested via `notebooks/predict.ipynb`.
-Pretrained weights are also available (in `checkpoints`).
-
-### 2.4. Implementation details
+#### 3.3. Implementation details
 Some techniques I used:
 - Early stopping
 - Learning rate scheduling
@@ -93,9 +93,14 @@ Some techniques I used:
 The pipeline can work in two color modes: `rgb` and `grayscale`.
 The difference is that in `rgb` the task is harder: we also need to colorize the image.
 
-The loss function is the Mean Squared Error (MSE).
+#### 3.4. Error metric
+Besides qualitative evaluation by looking at the restored photos in the test set, I specified the Mean Squared Error (MSE) as the error metric, to compare the original and restored photos.
+MSE is also the loss function that the model attempts to minimize.
+Assuming we require any pixel of the restored photo to be within %1 of the corresponding pixel in the original image, I calculated a value of `0.0001` as the target MSE.
+MSE after the first epoch becomes `0.186` and the model output already resembles the input a lot (without much denoising/in-painting), and it finally reaches its best of `0.008` after 16 epochs before overfitting.
+My initial aim was much lower.
 
-### 2.5. Results
+#### 3.4. Results
 After training the `grayscale` model for 36 epochs, here are a few test results of the epoch with the lowest validation loss.
 ![alt text](images/result1.png)
 ![alt text](images/result2.png)
@@ -112,3 +117,9 @@ As for the colorization, the `rgb` version of the pipeline does not work at all 
 ![alt text](images/rgb1.png)
 ![alt text](images/rgb2.png)
 ![alt text](images/rgb3.png)
+
+#### 3.5 Time breakdown
+1. Dataset synthesis and augmentation: 5 hrs, which was much faster than I expected since the idea of overlaying dirt textures worked out pretty well. The simulated photos look realistic.
+2. Models took most of the time by far: about 40 hrs, which was more than I expected. Choosing a suitable approach to implementation and establishing a working pipeline took longer than I expected. Development was also made more difficult because of the difficulties with development in Colab. Initially, I was developing completely in Colab before committing to any approach.
+3. Fine-tuning the grayscale model did not take much time, but I spent about 5 hrs fine-tuning the rgb model which did not work out in the end.
+4. Writing the report and documentation for the code for this assignment took about 4 hrs.
