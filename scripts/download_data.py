@@ -1,4 +1,5 @@
-from data.download_data import load_data_google_drive
+from data.download_data import download_and_unzip_from_drive
+from data.download_data import download_checkpoint_from_drive
 
 
 if __name__ == "__main__":
@@ -11,12 +12,16 @@ if __name__ == "__main__":
     ## Load the DIV2K dataset,
     # for training
     url = "https://drive.google.com/file/d/15M1sLNX7uX16fo6UmszTlfmrKAmLizdB/view?usp=sharing"
-    load_data_google_drive(url, "div2k-hr-train")
+    download_and_unzip_from_drive(url, "div2k-hr-train")
 
     # for testing
     url = "https://drive.google.com/file/d/15JuDY0_nkwnbV9SMmmyTtii6xrG3Gg4F/view?usp=sharing"
-    load_data_google_drive(url, "div2k-hr-test")
+    download_and_unzip_from_drive(url, "div2k-hr-test")
 
     ## Load overlay textures
     url = "https://drive.google.com/file/d/1-35t5gG8JXVJ9n0S_nyvBEWheh2s5Bax/view?usp=sharing"
-    load_data_google_drive(url, "textures")
+    download_and_unzip_from_drive(url, "textures")
+
+    ### Load pretrained model
+    url = "https://drive.google.com/file/d/15Qk4iDjH_WMqT_5F_8uGD-bMChL_pns_/view?usp=sharing"
+    download_checkpoint_from_drive(url)

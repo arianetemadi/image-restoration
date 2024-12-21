@@ -3,7 +3,7 @@ import gdown
 import shutil
 
 
-def load_data_google_drive(url, target_name):
+def download_and_unzip_from_drive(url, target_name):
     """
     Utility function for downloading zipped data from Google Drive.
 
@@ -27,3 +27,23 @@ def load_data_google_drive(url, target_name):
         shutil.unpack_archive(path, dir)
 
     return dir
+
+
+def download_checkpoint_from_drive(url):
+    """
+    Utility function for downloading pretrained model weights from Google Drive.
+
+    Args:
+        url (str): url to the file on Google Drive.
+
+    Returns:
+        str: path to the data that is downloaded.
+    """
+    root = "../checkpoints/"
+
+    # download from Google Drive
+    path = root + "pretrained.weights.h5"
+    if not os.path.isfile(path):
+        gdown.download(url=url, output=path, fuzzy=True)
+
+    return path
