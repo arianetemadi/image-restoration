@@ -19,7 +19,7 @@ if __name__ == "__main__":
     download_and_unzip_from_drive(url, "div2k-hr-test")
 
     ## Load overlay textures
-    url = "https://drive.google.com/file/d/1-35t5gG8JXVJ9n0S_nyvBEWheh2s5Bax/view?usp=sharing"
+    url = "https://drive.google.com/file/d/19UkTo531efYLbvYT768OfvRej9EnQEEd/view?usp=sharing"
     download_and_unzip_from_drive(url, "textures")
 
     ### Load pretrained models
