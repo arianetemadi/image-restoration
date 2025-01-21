@@ -1,5 +1,7 @@
 # image-restoration
 
+Demo Application: https://huggingface.co/spaces/arianetemadi/image-restoration
+
 ## Assignment 1
 
 Project of the course *Applied Deep Learning*
